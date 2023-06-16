@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { Item } from './item.model';
-import { ItemStatus } from './item-status.enum';
+import { CreateItemDto } from './dto/create-item.dto';
 
 @Controller('items')
 export class ItemsController {
@@ -17,20 +17,20 @@ export class ItemsController {
         return this.itemsService.findById(id);
     }
 
+
     @Post()
-    create(
-        @Body('id') id: string,
-        @Body('name') name: string,
-        @Body('price') price: number,
-        @Body('description') description: string,
-    ): Item {
-        const item: Item = {//ES6の省略した書き方
-            id,
-            name,
-            price,
-            description,
-            status: ItemStatus.ON_SALE,
-        }
-        return this.itemsService.create(item);
+    create(@Body() createItemDto: CreateItemDto): Item {
+        return this.itemsService.create(createItemDto);
+    }
+
+
+    @Patch(':id')
+    updateStatus(@Param('id') id: string): Item {
+        return this.itemsService.updateStatus(id);
+    }
+
+    @Delete(':id')
+    delete(@Param('id') id: string): void {
+        return this.itemsService.delete(id);
     }
 }
